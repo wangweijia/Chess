@@ -35,7 +35,7 @@ class ChessPieces:
 
         # 棋盘指针
         self.checkerboard = checkerboard
-
+        # 当前的 玩家
         self.player = player
 
     def name(self):
@@ -58,7 +58,7 @@ class ChessPieces:
         return self.pathStrXY(self.currentX, self.currentY)
 
     def pathStrXY(self, x, y):
-        return '{}:{}'.format(x, y)
+        return '{}:{}'.format(int(x), int(y))
 
     def isInEnemy(self):
         return self.initY * self.direction < 0
@@ -69,7 +69,12 @@ class ChessPieces:
             {'x': 0, 'y': 0}
         ]
 
-    # 当前可以 选择的 下一步 位置
+    # 接下来的走法是否有阻碍
+    def isHinderBy(self, baseX, baseY, stepX, stepY):
+        # 住要用于 判断 马 和 相 是否被挡住 中间位置
+        return False
+
+    # 当前可以 选择的 下一步 位置（一中种走法）
     def updateNextStepsByXY(self, baseX, baseY, stepX, stepY):
         if self.live == False:
             return
@@ -81,6 +86,9 @@ class ChessPieces:
 
         nextX = baseX + x
         nextY = baseY + y
+
+        if self.isHinderBy(baseX, baseY, stepX, stepY):
+            return allNextPath
 
         if self.isInScope(nextX, nextY):
             nextPath = {
@@ -102,7 +110,12 @@ class ChessPieces:
 
     # 当前可以 选择的 下一步 位置
     def updateNextSteps(self):
+        self.nextSteps = []
+        # print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        # print(self.name())
+        # print(self.currentX, self.currentY)
         if self.live == False:
+            # print('is die')
             return
 
         allNextPath = []
@@ -116,7 +129,7 @@ class ChessPieces:
             else:
                 for i in allP:
                     allNextPath.append(i)
-
+        # print(allNextPath)
         self.nextSteps = allNextPath
 
     # 获取当前的坐标
@@ -240,6 +253,26 @@ class Ma(ChessPieces):
     def __init__(self, initX, initY, direction, checkerboard, player):
         super().__init__(initX, initY, direction, ChessPiecesType.Ma, checkerboard, player)
 
+    # 接下来的走法是否有阻碍
+    def isHinderBy(self, baseX, baseY, stepX, stepY):
+        absStepX = abs(stepX)
+        absStepY = abs(stepY)
+
+        nextX = baseX
+        nextY = baseY
+
+        if absStepX > absStepY:
+            nextX += stepX / 2
+        else:
+            nextY += stepY / 2
+
+        pathStr = self.pathStrXY(nextX, nextY)
+        # print(pathStr)
+        if self.checkerboard.checkerboardPath.get(pathStr):
+            return True
+        else:
+            return False
+
     def stepWays(self):
         return [
             {'x': 2, 'y': 4},
@@ -339,6 +372,20 @@ class Xiang(ChessPieces):
                 'minY': -9,
                 'maxY': -1
             }
+
+        # 接下来的走法是否有阻碍
+    def isHinderBy(self, baseX, baseY, stepX, stepY):
+        nextX = baseX
+        nextY = baseY
+
+        nextX += stepX / 2
+        nextY += stepY / 2
+
+        pathStr = self.pathStrXY(nextX, nextY)
+        if self.checkerboard.checkerboardPath.get(pathStr):
+            return True
+        else:
+            return False
 
 # 士
 class Shi(ChessPieces):

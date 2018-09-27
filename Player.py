@@ -45,7 +45,12 @@ class Player:
         nextStep = nextSteps[index]
         return nextStep
 
-    def nextStep(self):
+    # 走下一步
+    def play(self, item, step):
+        item.doNextStep(step)
+
+    # 随机下一步
+    def randomNextStep(self):
         self.updataAllStep()            
         if self.isWin:
             step = self.winStep
@@ -57,7 +62,7 @@ class Player:
             print(item)
             print(step)
 
-            item.doNextStep(step)
+            self.play(item, step)
 
 
 

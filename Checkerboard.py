@@ -13,6 +13,7 @@ class Checkerboard:
 
         self.nextPlayer = 0
         self.checkerboardPath = self.initCheckerboard()
+        self.round = 0
 
     def initPlayer(self, direction):
         aPlayer = Player(direction)
@@ -105,6 +106,8 @@ class Checkerboard:
         return path
 
     def getNextPlayer(self):
+        print('self.round ', self.round)
+        self.round += 1
         self.renderView()
         self.nextPlayer = self.nextPlayer + 1
         player = self.allPlayers[self.nextPlayer%2]
@@ -112,9 +115,14 @@ class Checkerboard:
         if self.allPlayers[0].isWin or self.allPlayers[1].isWin:
             print('over')
             print(player)
+            return player.direction
         else:
-            player.nextStep()
-            self.getNextPlayer()
+            if self.round > 2000:
+                return 0
+            else:
+                player.randomNextStep()
+                # return 99
+                return self.getNextPlayer()
 
     def renderView(self): 
         print('- - - - - - - - - - - - - - - - - - - - -')
@@ -132,15 +140,3 @@ class Checkerboard:
             print(s)
             if y == -1:
                 print('   -8- -6- -4- -2---0- +2- +4- +6- +8--')
-
-
-def main():
-    checkerboard = Checkerboard()
-    checkerboard.getNextPlayer()
-    # for k in checkerboard.checkerboardPath:
-    #     a = checkerboard.checkerboardPath[k]
-    #     a.updateNextSteps()
-
-
-if __name__ == '__main__':
-  main()
