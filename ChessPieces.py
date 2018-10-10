@@ -115,7 +115,6 @@ class ChessPieces:
         # print(self.name())
         # print(self.currentX, self.currentY)
         if self.live == False:
-            # print('is die')
             return
 
         allNextPath = []
@@ -129,7 +128,6 @@ class ChessPieces:
             else:
                 for i in allP:
                     allNextPath.append(i)
-        # print(allNextPath)
         self.nextSteps = allNextPath
 
     # 获取当前的坐标
@@ -170,9 +168,9 @@ class ChessPieces:
         self.currentY = y
 
     def updataWinStep(self, step):
-        print('-winer')
-        print(self.name())
-        print(step)
+        # print('-winer')
+        # print(self.name())
+        # print(step)
         self.player.win(step, self)
         return [step]
 

@@ -1,7 +1,10 @@
 from Player import Player
 from ChessPieces import *
+import copy 
 
 class Checkerboard:
+    MaxCount = 2000
+
     def __init__(self):
         self.player1 = self.initPlayer(1)
         self.player2 = self.initPlayer(-1)
@@ -105,26 +108,58 @@ class Checkerboard:
         
         return path
 
-    def getNextPlayer(self):
-        print('self.round ', self.round)
+    def currentPlayer(self):
+        return self.allPlayers[self.nextPlayer%2]
+
+    def turnNextPlayer(self):
+        self.nextPlayer += 1
+
+    def turnNextRound(self):
         self.round += 1
-        self.renderView()
-        self.nextPlayer = self.nextPlayer + 1
-        player = self.allPlayers[self.nextPlayer%2]
+
+    def getNextPlayerPlay(self):
+        self.turnNextPlayer()
+        
+        self.turnNextRound()
+        player = self.currentPlayer()
+
+        if self.judgmentOver():
+            if self.round > self.MaxCount:
+                return 0
+            else:
+                return player.direction
+        else:
+            player.randomNextStep()
+            return self.getNextPlayerPlay()
 
         if self.allPlayers[0].isWin or self.allPlayers[1].isWin:
-            print('over')
-            print(player)
+            # print('over')
+            # print(player)
             return player.direction
         else:
-            if self.round > 2000:
+            if self.round > self.MaxCount:
                 return 0
             else:
                 player.randomNextStep()
                 # return 99
-                return self.getNextPlayer()
+                return self.getNextPlayerPlay()
+
+    def judgmentOver(self):
+        if self.allPlayers[0].isWin or self.allPlayers[1].isWin:
+            return True
+        elif self.round > self.MaxCount:
+            return True
+        return False
+
+    def currentPlayerPlay(self, item, step):
+        self.turnNextRound()
+        player = self.currentPlayer()
+        player.play(item, step)
+        # self.renderView()
+        # self.turnNextPlayer()
 
     def renderView(self): 
+        # return
         print('- - - - - - - - - - - - - - - - - - - - -')
 
         for y in range(-9, 10, 2):

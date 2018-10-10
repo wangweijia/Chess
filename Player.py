@@ -59,8 +59,8 @@ class Player:
             item = self.randerOneChessPiece()
             step = self.randerNextStep(item)
 
-            print(item)
-            print(step)
+            # print(item)
+            # print(step)
 
             self.play(item, step)
 
